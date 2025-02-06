@@ -20,8 +20,8 @@ public class Cat : Game
     private bool _imageSaved;
 
     private Cell[,] _world;
-    private const int WorldX = 100;
-    private const int WorldY = 100;
+    private const int WorldX = 300;
+    private const int WorldY = 300;
     private int _iterations;
 
     private Iterator _iterator;

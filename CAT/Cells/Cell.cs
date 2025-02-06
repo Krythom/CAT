@@ -49,21 +49,35 @@ public abstract class Cell
 
         for (int x = -1 * range; x <= range; x++)
         {
-            for (int y = -1 * range; y <= range; y++)
+            if (wrap)
             {
-                if (wrap)
+                if (x != 0)
                 {
-                    if ((x == 0 || y == 0) && x != y)
-                    {
-                        neighbors.Add(world[(Pos.X + x + worldX) % worldX, (Pos.Y + y + worldY) % worldY]);
-                    }
+                    neighbors.Add(world[(Pos.X + x + worldX) % worldX, Pos.Y]);
                 }
-                else
+            }
+            else
+            {
+                if (x != 0 && BoundsCheck(worldX, worldY, Pos.X + x, Pos.Y))
                 {
-                    if ((x == 0 || y == 0) && x != y && BoundsCheck(worldX, worldY, Pos.X + x, Pos.Y + y))
-                    {
-                        neighbors.Add(world[Pos.X + x, Pos.Y + y]);
-                    }
+                    neighbors.Add(world[Pos.X + x, Pos.Y]);
+                }
+            }
+        }
+        for (int y = -1 * range; y <= range; y++)
+        {
+            if (wrap)
+            {
+                if (y != 0)
+                {
+                    neighbors.Add(world[Pos.X, (Pos.Y + y + worldY) % worldY]);
+                }
+            }
+            else
+            {
+                if (y != 0 && BoundsCheck(worldX, worldY, Pos.X, Pos.Y + y))
+                {
+                    neighbors.Add(world[Pos.X, Pos.Y + y]);
                 }
             }
         }

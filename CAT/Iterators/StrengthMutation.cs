@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace CAT;
@@ -11,8 +10,6 @@ public class StrengthMutation(int types) : Iterator
     List<FloatCell> _neighbors = [];
     private readonly Color[] _colors = new Color[types];
     private readonly HashSet<Point> _checkSet = [];
-    private readonly HashSet<Point> _toSleep = [];
-    private readonly HashSet<Point> _toWake = [];
         
     public override FloatCell[,] InitWorld(int width, int height)
     {
@@ -39,9 +36,6 @@ public class StrengthMutation(int types) : Iterator
 
     public override FloatCell[,] Iterate()
     {
-        _toWake.Clear();
-        _toSleep.Clear();
-        
         for (int i = 0; i < _colors.Length; i++)
         {
             _colors[i] = Mutate(_colors[i], 5);
@@ -54,8 +48,7 @@ public class StrengthMutation(int types) : Iterator
 
             double highest = double.MinValue;
             FloatCell winner = current;
-
-            bool sleep = true;
+            
             foreach (FloatCell neighbor in _neighbors)
             {
                 if (neighbor.Strength > highest)
@@ -63,41 +56,20 @@ public class StrengthMutation(int types) : Iterator
                     highest = neighbor.Strength;
                     winner = neighbor;
                 }
-                if (neighbor.Id != current.Id)
-                {
-                    sleep = false;
-                }
             }
-
-            if (sleep)
+                
+            if (winner.Id != current.Id)
             {
-                _toSleep.Add(current.Pos);
-                _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, current.Col);
+                _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, _colors[winner.Id]);
             }
             else
             {
-                foreach (FloatCell neighbor in _neighbors)
-                {
-                    _toWake.Add(neighbor.Pos);
-                }
-                
-                if (winner.Id != current.Id)
-                {
-                    _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, _colors[winner.Id]);
-                }
-                else
-                {
-                    _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, current.Col);
-                }
+                _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, current.Col);
             }
             
             _newWorld[x, y].Strength += Rand.NextDouble() - 1;
         }
         
-        _checkSet.ExceptWith(_toSleep);
-        _checkSet.UnionWith(_toWake);
-        
-        Debug.WriteLine("Awake: " + _checkSet.Count);
         (_newWorld, _world) = (_world, _newWorld);
         return _world;
     }
