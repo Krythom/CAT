@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CommunityToolkit.HighPerformance;
+using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -12,7 +12,7 @@ namespace CAT;
 
 public class Cat : Game
 {
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Texture2D _tex;
     private Color[] _backingColors;
@@ -25,10 +25,11 @@ public class Cat : Game
     private int _iterations;
 
     private Iterator _iterator;
-    private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
 
+    private bool _paused;
+    
     public Cat()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -42,7 +43,7 @@ public class Cat : Game
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
         Iterator.Rand = _rand;
-        _iterator = new StrengthMutation(2);
+        _iterator = new AdjWalls();
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
@@ -69,6 +70,13 @@ public class Cat : Game
 
     protected override void Update(GameTime gameTime)
     {
+        Input.Update();
+
+        if (Input.KeyPressed(Keys.Space))
+        {
+            _paused = !_paused;
+        }
+        
         if (_iterator.Completed)
         {
             if (!_imageSaved)
@@ -79,14 +87,11 @@ public class Cat : Game
         }
         else
         {
-            _world = _iterator.Iterate();
-            _iterations++;
-            if (SpeedUp == 0 || _iterations % SpeedUp != 0)
+            if (!_paused || Input.KeyPressed(Keys.OemPeriod))
             {
-                SuppressDraw();
-            }
-            else
-            {
+                _world = _iterator.Iterate();
+                _iterations++;
+                
                 var c = _colors.Span;
                 for (int x = 0; x < WorldX; x++)
                 {

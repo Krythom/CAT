@@ -89,7 +89,7 @@ public abstract class Cell
     {
         int worldX = world.GetLength(0);
         int worldY = world.GetLength(1);
-        
+
         if (wrap)
         {
             return world[(Pos.X + xOffset + worldX) % worldX, (Pos.Y + yOffset + worldY) % worldY];

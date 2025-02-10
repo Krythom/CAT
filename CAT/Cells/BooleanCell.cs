@@ -5,7 +5,7 @@ namespace CAT;
 
 public class BooleanCell : Cell
 {
-    public readonly bool Alive;
+    public bool Alive;
     
     public BooleanCell(int x, int y, bool living)
     {
