@@ -38,6 +38,8 @@ public class StrengthMutation(int types) : Iterator
 
     public override FloatCell[,] Iterate()
     {
+        bool done = true;
+        
         for (int i = 0; i < _colors.Length; i++)
         {
             _colors[i] = Mutate(_colors[i], 5);
@@ -60,15 +62,30 @@ public class StrengthMutation(int types) : Iterator
                         highest = neighbor.Strength;
                         winner = neighbor;
                     }
+
+                    if (neighbor.Id != current.Id)
+                    {
+                        done = false;
+                    }
                 }
                 
-                if (winner.Id != current.Id)
+                if (winner.Id == current.Id)
                 {
-                    _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, _colors[winner.Id]);
+                    FloatCell newCell = new(x, y, highest, winner.Id, current.Col)
+                    {
+                        LastUpdate = current.LastUpdate,
+                        Updates = current.Updates
+                    };
+                    _newWorld[x, y] = newCell;
                 }
                 else
                 {
-                    _newWorld[x, y] = new FloatCell(x, y, highest, winner.Id, current.Col);
+                    FloatCell newCell = new(x, y, highest, winner.Id, _colors[winner.Id])
+                    {
+                        LastUpdate = Cat.Iterations,
+                        Updates = current.Updates + 1
+                    };
+                    _newWorld[x, y] = newCell;
                 }
             
                 _newWorld[x, y].Strength += Rand.NextDouble() - 1;
@@ -76,6 +93,7 @@ public class StrengthMutation(int types) : Iterator
         } 
         
         (_newWorld, _world) = (_world, _newWorld);
+        Completed = done;
         return _world;
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CommunityToolkit.HighPerformance;
-using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -12,24 +12,24 @@ namespace CAT;
 
 public class Cat : Game
 {
-    private readonly GraphicsDeviceManager _graphics;
+    private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Texture2D _tex;
     private Color[] _backingColors;
     private Memory2D<Color> _colors;
     private bool _imageSaved;
+    private bool _jsonSaved;
 
     private Cell[,] _world;
-    private const int WorldX = 300;
-    private const int WorldY = 300;
-    private int _iterations;
+    private const int WorldX = 2000;
+    private const int WorldY = 2000;
+    public static int Iterations;
 
     private Iterator _iterator;
+    private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
 
-    private bool _paused;
-    
     public Cat()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -70,13 +70,6 @@ public class Cat : Game
 
     protected override void Update(GameTime gameTime)
     {
-        Input.Update();
-
-        if (Input.KeyPressed(Keys.Space))
-        {
-            _paused = !_paused;
-        }
-        
         if (_iterator.Completed)
         {
             if (!_imageSaved)
@@ -84,14 +77,23 @@ public class Cat : Game
                 SaveImage();
                 _imageSaved = true;
             }
+
+            if (!_jsonSaved)
+            {
+                JsonCreation.CreateJson(_world, WorldX, WorldY, Iterations);
+                _jsonSaved = true;
+            }
         }
         else
         {
-            if (!_paused || Input.KeyPressed(Keys.OemPeriod))
+            _world = _iterator.Iterate();
+            Iterations++;
+            if (SpeedUp == 0 || Iterations % SpeedUp != 0)
             {
-                _world = _iterator.Iterate();
-                _iterations++;
-                
+                SuppressDraw();
+            }
+            else
+            {
                 var c = _colors.Span;
                 for (int x = 0; x < WorldX; x++)
                 {
@@ -105,7 +107,7 @@ public class Cat : Game
 
         double ms = gameTime.ElapsedGameTime.TotalMilliseconds;
         Debug.WriteLine(
-            "fps: " + (1000 / ms) + " (" + ms + "ms)" + " iterations: " + _iterations
+            "fps: " + (1000 / ms) + " (" + ms + "ms)" + " iterations: " + Iterations
         );
 
         base.Update(gameTime);
@@ -125,7 +127,7 @@ public class Cat : Game
     private void SaveImage()
     {
         string date = DateTime.Now.ToString("s").Replace("T", " ").Replace(":", "-");
-        Stream stream = new FileStream($"{date}_i{_iterations}.png", FileMode.Create);
+        Stream stream = new FileStream($"{date}_i{Iterations}.png", FileMode.Create);
         _tex.SaveAsPng(stream, _tex.Width, _tex.Height);
     }
 }
