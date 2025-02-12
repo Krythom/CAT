@@ -12,7 +12,7 @@ namespace CAT;
 
 public class Cat : Game
 {
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Texture2D _tex;
     private Color[] _backingColors;
@@ -21,12 +21,12 @@ public class Cat : Game
     private bool _jsonSaved;
 
     private Cell[,] _world;
-    private const int WorldX = 2000;
-    private const int WorldY = 2000;
+    private const int WorldX = 100;
+    private const int WorldY = 100;
     public static int Iterations;
 
     private Iterator _iterator;
-    private const int SpeedUp = 1;
+    private const int SpeedUp = 2;
     private Random _rand = new();
     private int _seed;
 
@@ -45,7 +45,7 @@ public class Cat : Game
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
         Iterator.Rand = _rand;
-        _iterator = new StrengthMutation(20);
+        _iterator = new AdjWalls();
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
