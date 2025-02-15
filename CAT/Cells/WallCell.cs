@@ -7,6 +7,7 @@ public class WallCell : Cell
 {
     public bool Alive;
     public bool DarkRegion;
+    public bool Last;
     
     public WallCell(int x, int y, bool living)
     {

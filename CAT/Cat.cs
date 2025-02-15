@@ -21,16 +21,16 @@ public class Cat : Game
     private bool _jsonSaved;
 
     private Cell[,] _world;
-    private const int WorldX = 100;
-    private const int WorldY = 100;
+    private const int WorldX = 1000;
+    private const int WorldY = 1000;
     public static int Iterations;
 
     private Iterator _iterator;
-    private const int SpeedUp = 2;
+    private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
 
-    private bool _paused;
+    private bool _paused = true;
 
     public Cat()
     {
@@ -72,6 +72,8 @@ public class Cat : Game
 
     protected override void Update(GameTime gameTime)
     {
+        Input.Update();
+        
         if (Input.KeyPressed(Keys.Space))
         {
             _paused = !_paused;

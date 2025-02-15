@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using SharpDX.Direct3D11;
 
 namespace CAT;
 
@@ -23,15 +24,24 @@ public class AdjWalls : Iterator
         {
             for (int y = 0; y < height; y++)
             {
-                if (Rand.Next(2) == 0)
-                {
-                    _world[x, y] = new WallCell(x, y, false);
-                }
-                else
+                if (Rand.Next(2) == 1)
                 {
                     _world[x, y] = new WallCell(x, y, true);
                 }
+                else
+                {
+                    _world[x, y] = new WallCell(x, y, false);
+                }
             }
+        }
+        
+        foreach (WallCell cell in _world)
+        {
+            cell.Last = cell.DarkRegion;
+            _neighbors = cell.GetMoore(_world, 1, true, _neighbors);
+            int count = _neighbors.Count(n => n.Alive);
+            cell.DarkRegion = count + 1 <= 4;
+            cell.Col = cell.DarkRegion ? Color.Black : Color.White;
         }
 
         return _world;
@@ -39,12 +49,16 @@ public class AdjWalls : Iterator
     
     public override WallCell[,] Iterate()
     {
+        if (Cat.Iterations == 9999)
+        {
+            Completed = true;
+        }
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
                 WallCell current = _world[x, y];
-
+                
                 if (current.Alive)
                 {
                     _neighbors = current.GetMoore(_world, 1, true, _neighbors);
@@ -70,22 +84,22 @@ public class AdjWalls : Iterator
                     {
                         _newWorld[x, y] = current;
                     }
-
-                    if (Cat.Iterations % 2 == 0)
-                    {
-                        _neighbors = _newWorld[x, y].GetMoore(_world, 1, true, _neighbors);
-                        int alive = 1 + _neighbors.Count(neighbor => neighbor.Alive);
-                        _newWorld[x, y].DarkRegion = alive <= 4;
-
-                        if (_newWorld[x, y].DarkRegion != current.DarkRegion)
-                        {
-                            _newWorld[x, y].Updates = current.Updates + 1;
-                            _newWorld[x, y].LastUpdate = Cat.Iterations;
-                        }
-                    }
-                    
-                    _newWorld[x, y].Col = _newWorld[x, y].DarkRegion? Color.Black : Color.White;
                 }
+            }
+        }
+
+        foreach (WallCell cell in _newWorld)
+        {
+            cell.Last = cell.DarkRegion;
+            _neighbors = cell.GetMoore(_newWorld, 1, true, _neighbors);
+            int count = _neighbors.Count(n => n.Alive);
+            cell.DarkRegion = count + 1 <= 4;
+            cell.Col = cell.DarkRegion ? Color.Black : Color.White;
+
+            if (cell.Last != cell.DarkRegion)
+            {
+                cell.LastUpdate = Cat.Iterations;
+                cell.Updates = _world[cell.Pos.X, cell.Pos.Y].Updates + 1;
             }
         }
 
