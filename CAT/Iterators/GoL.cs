@@ -40,6 +40,10 @@ public class GoL : Iterator
     public override BooleanCell[,] Iterate()
     {
         List<BooleanCell> neighbors = [];
+        if (Cat.Iterations == 10000)
+        {
+            Completed = true;
+        }
 
         for (int x = 0; x < _width; x++)
         {
@@ -55,6 +59,8 @@ public class GoL : Iterator
                     if (aliveNeighbors is > 3 or < 2)
                     {
                         _newWorld[x, y] = new BooleanCell(x, y, false);
+                        _newWorld[x, y].Updates = current.Updates + 1;
+                        _newWorld[x, y].LastUpdate = Cat.Iterations;
                     }
                     else
                     {
@@ -66,6 +72,8 @@ public class GoL : Iterator
                     if (aliveNeighbors == 3)
                     {
                         _newWorld[x, y] = new BooleanCell(x, y, true);
+                        _newWorld[x, y].Updates = current.Updates + 1;
+                        _newWorld[x, y].LastUpdate = Cat.Iterations;
                     }
                     else
                     {

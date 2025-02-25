@@ -17,15 +17,14 @@ public class Cat : Game
     private Texture2D _tex;
     private Color[] _backingColors;
     private Memory2D<Color> _colors;
-    private bool _imageSaved;
-    private bool _jsonSaved;
+    private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 1000;
-    private const int WorldY = 1000;
+    private const int WorldX = 700;
+    private const int WorldY = 700;
     public static int Iterations;
 
-    private Iterator _iterator;
+    private HueGeneAnts _iterator;
     private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
@@ -45,7 +44,7 @@ public class Cat : Game
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
         Iterator.Rand = _rand;
-        _iterator = new AdjWalls();
+        _iterator = new HueGeneAnts();
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
@@ -78,20 +77,23 @@ public class Cat : Game
         {
             _paused = !_paused;
         }
-        
-        if (_iterator.Completed)
+
+        if (Input.KeyPressed(Keys.R))
         {
-            if (!_imageSaved)
+            Initialize();
+            _saved = false;
+        }
+        
+        if (_iterator.Completed || Input.KeyPressed(Keys.Escape))
+        {
+            if (!_saved)
             {
                 SaveImage();
-                _imageSaved = true;
-            }
-
-            if (!_jsonSaved)
-            {
                 JsonCreation.CreateJson(_world, WorldX, WorldY, Iterations);
-                _jsonSaved = true;
+                _saved = true;
             }
+            Initialize();
+            _saved = false;
         }
         else
         {
@@ -117,7 +119,13 @@ public class Cat : Game
             }
         }
 
+        if (Input.KeyPressed(Keys.Escape))
+        {
+            Exit();
+        }
+
         double ms = gameTime.ElapsedGameTime.TotalMilliseconds;
+        
         Debug.WriteLine(
             "fps: " + (1000 / ms) + " (" + ms + "ms)" + " iterations: " + Iterations
         );

@@ -9,6 +9,8 @@ namespace CAT;
 public class Soldiers(int types) : Iterator
 {
     private Soldier[,] _world;
+    private readonly List<Soldier> _allies = [];
+    private readonly List<Soldier> _enemies = [];
     private int _width;
     private int _height;
     private Color[] _colors;
@@ -42,9 +44,11 @@ public class Soldiers(int types) : Iterator
 
     public override Soldier[,] Iterate()
     {
+        bool done = true;
+        
         for (int i = 0; i < _colors.Length; i++)
         {
-            _colors[i] = Mutate(_colors[i], 1);
+            _colors[i] = Mutate(_colors[i], 5);
         }
         
         List<Soldier> neighbors = [];
@@ -52,61 +56,64 @@ public class Soldiers(int types) : Iterator
         {
             Soldier current = _world[p.X, p.Y];
             
-            neighbors = current.GetMoore(_world, 1, true, neighbors);
-            List<Soldier> allies = [];
-            List<Soldier> enemies = [];
+            neighbors = current.GetNeumann(_world, 1, true, neighbors);
+            _allies.Clear();
+            _enemies.Clear();
 
             foreach (Soldier neighbor in neighbors)
             {
                 if (neighbor.Id == current.Id)
                 {
-                    allies.Add(neighbor);
+                    _allies.Add(neighbor);
                 }
                 else
                 {
-                    enemies.Add(neighbor);
+                    _enemies.Add(neighbor);
                 }
             }
 
             // Build
-            if (allies.Count == 8)
+            if (_allies.Count == 8)
             {
                 current.Count++;
             }
 
             // Move
             double total = current.Count;
-            foreach (Soldier ally in allies)
+            foreach (Soldier ally in _allies)
             {
                total += ally.Count;
             }
             
-            total /= allies.Count + 1;
+            total /= _allies.Count + 1;
             current.Count = total;
             
-            foreach (Soldier ally in allies)
+            foreach (Soldier ally in _allies)
             {
                 ally.Count = total;
             }
 
             // Fight
             double enemyStrength = 0;
-            foreach (Soldier enemy in enemies)
+            foreach (Soldier enemy in _enemies)
             {
                 enemyStrength += enemy.Count;
             }
 
             double diff = current.Count - enemyStrength;
-            diff /= enemies.Count + 1;
+            diff /= _enemies.Count + 1;
 
             if (diff < 0)
             {
-                Soldier winner = enemies[Rand.Next(enemies.Count)];
-                current.Col = _colors[current.Id];
+                Soldier winner = _enemies[Rand.Next(_enemies.Count)];
                 current.Id = winner.Id;
+                current.Col = _colors[current.Id];
                 current.Count = -diff;
+                current.Updates++;
+                current.LastUpdate = Cat.Iterations;
+                done = false;
                 
-                foreach (Soldier enemy in enemies)
+                foreach (Soldier enemy in _enemies)
                 {
                     enemy.Count = -diff;
                 }
@@ -115,15 +122,18 @@ public class Soldiers(int types) : Iterator
             {
                 current.Count = diff;
                 
-                foreach (Soldier enemy in enemies)
+                foreach (Soldier enemy in _enemies)
                 {
                     enemy.Id = current.Id;
-                    enemy.Col = Mutate(current.Col, 10);
+                    enemy.Col = _colors[enemy.Id];
                     enemy.Count = diff;
+                    enemy.Updates++;
+                    enemy.LastUpdate = Cat.Iterations;
                 }
             }
         }
 
+        Completed = done;
         return _world;
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
-using SharpDX.Direct3D11;
 
 namespace CAT;
 
@@ -49,7 +48,7 @@ public class AdjWalls : Iterator
     
     public override WallCell[,] Iterate()
     {
-        if (Cat.Iterations == 9999)
+        if (Cat.Iterations == 10000)
         {
             Completed = true;
         }
@@ -88,18 +87,21 @@ public class AdjWalls : Iterator
             }
         }
 
-        foreach (WallCell cell in _newWorld)
+        if (Cat.Iterations % 2 == 0)
         {
-            cell.Last = cell.DarkRegion;
-            _neighbors = cell.GetMoore(_newWorld, 1, true, _neighbors);
-            int count = _neighbors.Count(n => n.Alive);
-            cell.DarkRegion = count + 1 <= 4;
-            cell.Col = cell.DarkRegion ? Color.Black : Color.White;
-
-            if (cell.Last != cell.DarkRegion)
+            foreach (WallCell cell in _newWorld)
             {
-                cell.LastUpdate = Cat.Iterations;
-                cell.Updates = _world[cell.Pos.X, cell.Pos.Y].Updates + 1;
+                cell.Last = cell.DarkRegion;
+                _neighbors = cell.GetMoore(_newWorld, 1, true, _neighbors);
+                int count = _neighbors.Count(n => n.Alive);
+                cell.DarkRegion = count + 1 <= 4;
+                cell.Col = cell.DarkRegion ? Color.Black : Color.White;
+
+                if (cell.Last != cell.DarkRegion)
+                {
+                    cell.LastUpdate = Cat.Iterations;
+                    cell.Updates = _world[cell.Pos.X, cell.Pos.Y].Updates + 1;
+                }
             }
         }
 
