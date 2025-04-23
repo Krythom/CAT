@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.MediaFoundation;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -20,16 +21,17 @@ public class Cat : Game
     private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 700;
-    private const int WorldY = 700;
+    private const int WorldX = 300;
+    private const int WorldY = 300;
     public static int Iterations;
 
-    private HueGeneAnts _iterator;
+    private Iterator _iterator;
     private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
 
-    private bool _paused = true;
+    private bool _paused = false;
+    private bool _gif = true;
 
     public Cat()
     {
@@ -41,10 +43,11 @@ public class Cat : Game
 
     protected override void Initialize()
     {
+        Iterations = 0;
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
         Iterator.Rand = _rand;
-        _iterator = new HueGeneAnts();
+        _iterator = new Crystal();
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
@@ -88,7 +91,7 @@ public class Cat : Game
         {
             if (!_saved)
             {
-                SaveImage();
+                SaveImage(false);
                 JsonCreation.CreateJson(_world, WorldX, WorldY, Iterations);
                 _saved = true;
             }
@@ -119,6 +122,11 @@ public class Cat : Game
             }
         }
 
+        if (_gif)
+        {
+            SaveImage(true);
+        }
+
         if (Input.KeyPressed(Keys.Escape))
         {
             Exit();
@@ -144,10 +152,19 @@ public class Cat : Game
         base.Draw(gameTime);
     }
     
-    private void SaveImage()
+    private void SaveImage(bool gif)
     {
-        string date = DateTime.Now.ToString("s").Replace("T", " ").Replace(":", "-");
-        Stream stream = new FileStream($"{date}_i{Iterations}.png", FileMode.Create);
+        Stream stream;
+        if (gif)
+        {
+            stream = new FileStream($"Gif/{Iterations}.png", FileMode.Create);
+        }
+        else
+        {
+            string date = DateTime.Now.ToString("s").Replace("T", " ").Replace(":", "-");
+            stream = new FileStream($"{date}_i{Iterations}.png", FileMode.Create);
+        }
+        
         _tex.SaveAsPng(stream, _tex.Width, _tex.Height);
     }
 }

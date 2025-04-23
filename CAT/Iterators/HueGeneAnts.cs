@@ -13,12 +13,12 @@ public class HueGeneAnts : Iterator
     private int _width;
     private int _height;
 
-    private const int PlantMutation = 10;
-    private const int AntMutation = 12;
+    private const int PlantMutation = 8;
+    private const int AntMutation = 10;
     private const int EnMultiplier = 10;
     private const int DeathDivider = 100;
     private const int BirthThreshold = 10;
-    private const double GrowthChance = 0.07;
+    private const double GrowthChance = 0.15;
     private const int EdibleRange = 50;
     
     public override FloatCell[,] InitWorld(int width, int height)
@@ -35,7 +35,7 @@ public class HueGeneAnts : Iterator
             {
                 if (Rand.NextDouble() > 0.99)
                 {
-                    if (Rand.NextDouble() > 0.9)
+                    if (Rand.NextDouble() > 0.99)
                     {
                         _world[x, y] = new FloatCell(x, y, Rand.NextDouble(), 1, startCol);
                     }

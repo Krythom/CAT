@@ -11,7 +11,6 @@ public class FloatCell : Cell
     {
         Strength = strength;
         Pos = new Point(x, y);
-        Name = "FloatCell";
         Col = col;
         Id = id;
     }

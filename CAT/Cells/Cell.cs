@@ -7,7 +7,6 @@ public abstract class Cell
 {
     public Point Pos;
     public Color Col;
-    public string Name;
     public int Updates;
     public int LastUpdate;
     

@@ -13,7 +13,6 @@ public class DirectionalCell : Cell
         Direction = direction;
         Pos = new Point(x, y);
         Col = col;
-        Name = "DirectionalCell";
     }
 
     public DirectionalCell(int x, int y, Point direction, double strength, Color col)
@@ -22,7 +21,6 @@ public class DirectionalCell : Cell
         Strength = strength;
         Pos = new Point(x, y);
         Col = col;
-        Name = "DirectionalCell";
     }
 }
 

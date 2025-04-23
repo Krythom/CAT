@@ -9,7 +9,6 @@ public class Soldier : Cell
 
     public Soldier(int x, int y, int id, double count, Color col)
     {
-        Name = "Soldier";
         Id = id;
         Count = count;
         Pos = new Point(x, y);

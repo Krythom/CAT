@@ -13,7 +13,6 @@ public class WallCell : Cell
     {
         Alive = living;
         Pos = new Point(x, y);
-        Name = "BooleanCell";
         Col = living ? Color.White : Color.Black;
     }
 }
