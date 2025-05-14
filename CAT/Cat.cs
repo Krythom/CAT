@@ -21,17 +21,18 @@ public class Cat : Game
     private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 300;
-    private const int WorldY = 300;
+    private const int WorldX = 500;
+    private const int WorldY = 500;
     public static int Iterations;
 
     private Iterator _iterator;
-    private const int SpeedUp = 1;
+    private const int SpeedUp = 2;
     private Random _rand = new();
     private int _seed;
 
     private bool _paused = false;
-    private bool _gif = true;
+    private const bool Gif = false;
+    private const bool Batch = false;
 
     public Cat()
     {
@@ -43,11 +44,11 @@ public class Cat : Game
 
     protected override void Initialize()
     {
+        Iterator.Rand = _rand;
+        _iterator = new RugWorld();
         Iterations = 0;
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
-        Iterator.Rand = _rand;
-        _iterator = new Crystal();
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
@@ -95,8 +96,12 @@ public class Cat : Game
                 JsonCreation.CreateJson(_world, WorldX, WorldY, Iterations);
                 _saved = true;
             }
-            Initialize();
-            _saved = false;
+
+            if (Batch)
+            {
+                Initialize();
+                _saved = false;
+            }
         }
         else
         {
@@ -122,7 +127,7 @@ public class Cat : Game
             }
         }
 
-        if (_gif)
+        if (Gif)
         {
             SaveImage(true);
         }
