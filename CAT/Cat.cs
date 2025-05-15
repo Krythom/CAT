@@ -21,8 +21,8 @@ public class Cat : Game
     private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 500;
-    private const int WorldY = 500;
+    private const int WorldX = 300;
+    private const int WorldY = 300;
     public static int Iterations;
 
     private Iterator _iterator;
@@ -32,7 +32,7 @@ public class Cat : Game
 
     private bool _paused = false;
     private const bool Gif = false;
-    private const bool Batch = false;
+    private const bool Batch = true;
 
     public Cat()
     {
@@ -45,7 +45,7 @@ public class Cat : Game
     protected override void Initialize()
     {
         Iterator.Rand = _rand;
-        _iterator = new RugWorld();
+        _iterator = new Pond(200);
         Iterations = 0;
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
@@ -58,8 +58,8 @@ public class Cat : Game
             c = Color.Black;
         
         InactiveSleepTime = TimeSpan.Zero;
-        _graphics.PreferredBackBufferWidth = 1000;
-        _graphics.PreferredBackBufferHeight = 1000;
+        _graphics.PreferredBackBufferWidth = 1500;
+        _graphics.PreferredBackBufferHeight = 1500;
         _graphics.SynchronizeWithVerticalRetrace = false;
         _graphics.ApplyChanges();
 
@@ -151,7 +151,7 @@ public class Cat : Game
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
         
         _tex.SetData(_backingColors);
-        _spriteBatch.Draw(_tex, new Rectangle(0, 0, 1000, 1000), Color.White);
+        _spriteBatch.Draw(_tex, new Rectangle(0, 0, 1500, 1500), Color.White);
         
         _spriteBatch.End();
         base.Draw(gameTime);
