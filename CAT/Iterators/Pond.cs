@@ -6,7 +6,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace CAT;
 
-public class Pond(int types) : Iterator
+public class Pond(int types, int tolerance) : Iterator
 {
     private List<IntCell> _neighbors = [];
     private IntCell[,] _world;
@@ -48,7 +48,7 @@ public class Pond(int types) : Iterator
                 foreach (IntCell neighbor in _neighbors)
                 {
                     int diff = Math.Abs(current.Strength - neighbor.Strength);
-                    if (diff < 20)
+                    if (diff < tolerance)
                     {
                         active = true;
                         break;
@@ -59,7 +59,7 @@ public class Pond(int types) : Iterator
                 {
                     done = false;
                     int newStrength = (current.Strength + Rand.Next(-1, 2) + types) % types;
-                    IntCell placed = new IntCell(x, y, newStrength, Color.White);
+                    IntCell placed = new(x, y, newStrength, Color.White);
                     placed.LastUpdate = Cat.Iterations;
                     placed.Updates = current.Updates + 1;
                     _newWorld[x, y] = placed;

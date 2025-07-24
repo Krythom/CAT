@@ -13,10 +13,10 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
-        <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105"/>
-        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105"/>
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+        <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.5-develop.2" />
+        <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.5-develop.2" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
         <Message Text="Restoring dotnet tools" Importance="High"/>

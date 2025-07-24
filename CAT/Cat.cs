@@ -21,12 +21,14 @@ public class Cat : Game
     private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 300;
-    private const int WorldY = 300;
+    private const int WorldX = 500;
+    private const int WorldY = 500;
+    private const int WindowX = 1000;
+    private const int WindowY = 1000;
     public static int Iterations;
 
     private Iterator _iterator;
-    private const int SpeedUp = 2;
+    private const int SpeedUp = 1;
     private Random _rand = new();
     private int _seed;
 
@@ -45,8 +47,8 @@ public class Cat : Game
     protected override void Initialize()
     {
         Iterator.Rand = _rand;
-        _iterator = new Pond(200);
         Iterations = 0;
+        _iterator = new D3m();
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
 
@@ -58,8 +60,8 @@ public class Cat : Game
             c = Color.Black;
         
         InactiveSleepTime = TimeSpan.Zero;
-        _graphics.PreferredBackBufferWidth = 1500;
-        _graphics.PreferredBackBufferHeight = 1500;
+        _graphics.PreferredBackBufferWidth = WindowX;
+        _graphics.PreferredBackBufferHeight = WindowY;
         _graphics.SynchronizeWithVerticalRetrace = false;
         _graphics.ApplyChanges();
 
@@ -151,7 +153,7 @@ public class Cat : Game
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
         
         _tex.SetData(_backingColors);
-        _spriteBatch.Draw(_tex, new Rectangle(0, 0, 1500, 1500), Color.White);
+        _spriteBatch.Draw(_tex, new Rectangle(0, 0, WindowX, WindowY), Color.White);
         
         _spriteBatch.End();
         base.Draw(gameTime);

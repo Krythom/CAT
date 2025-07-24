@@ -39,6 +39,50 @@ public abstract class Cell
         
         return neighbors;
     }
+
+    private Point[] _horse = [new(1,2), new(2, 1), new(-1,2), new(1,-2), new(-2, 1), new(2,-1), new(-1,-2), new(-2, -1)];
+
+    public List<T> GetChess<T>(T[,] world, int type, List<T> neighbors) where T : Cell
+    {
+        neighbors.Clear();
+
+        switch (type)
+        {
+            case 0:
+                return GetNeumann(world, 1, false, neighbors);
+            case 1:
+                return GetNeumann(world, 8, false, neighbors);
+            case 2:
+                return GetDiagonal(world, 8, false, neighbors);
+            case 3:
+                foreach (Point loc in _horse)
+                {
+                    neighbors.Add(GetCell(world,loc.X,loc.Y,true));
+                }
+                return neighbors;
+            case 4:
+                return GetMoore(world, 1, false, neighbors);
+            case 5:
+                GetDiagonal(world, 8, false, neighbors);
+                neighbors.AddRange(GetNeumann(world, 8, false, []));
+                return neighbors;
+            default:
+                return neighbors;
+        }
+    }
+
+    public List<T> GetDiagonal<T>(T[,] world, int range, bool wrap, List<T> neighbors) where T : Cell
+    {
+        neighbors.Clear();
+        for (int i = 1; i < range + 1; i++)
+        {
+            neighbors.Add(GetCell(world, i, i, wrap));
+            neighbors.Add(GetCell(world, -i, i, wrap));
+            neighbors.Add(GetCell(world, i, -i, wrap));
+            neighbors.Add(GetCell(world, -i, -i, wrap));
+        }
+        return neighbors;
+    }
     
     public List<T> GetNeumann<T>(T[,] world, int range, bool wrap, List<T> neighbors) where T : Cell
     {
