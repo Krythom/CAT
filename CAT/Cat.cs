@@ -21,8 +21,8 @@ public class Cat : Game
     private bool _saved;
 
     private Cell[,] _world;
-    private const int WorldX = 500;
-    private const int WorldY = 500;
+    private const int WorldX = 200;
+    private const int WorldY = 200;
     private const int WindowX = 1000;
     private const int WindowY = 1000;
     public static int Iterations;
@@ -32,9 +32,9 @@ public class Cat : Game
     private Random _rand = new();
     private int _seed;
 
-    private bool _paused = false;
+    private bool _paused = true;
     private const bool Gif = false;
-    private const bool Batch = true;
+    private const bool Batch = false;
 
     public Cat()
     {
@@ -48,16 +48,13 @@ public class Cat : Game
     {
         Iterator.Rand = _rand;
         Iterations = 0;
-        _iterator = new D3m();
+        _iterator = new Gem();
         _seed = Environment.TickCount;
         _rand = new Random(_seed);
 
         _backingColors = new Color[WorldX * WorldY];
         _colors = new Memory2D<Color>(_backingColors, WorldX, WorldY);
         _tex = new Texture2D(GraphicsDevice, WorldX, WorldY);
-        
-        foreach (ref Color c in _backingColors.AsSpan())
-            c = Color.Black;
         
         InactiveSleepTime = TimeSpan.Zero;
         _graphics.PreferredBackBufferWidth = WindowX;
@@ -66,6 +63,15 @@ public class Cat : Game
         _graphics.ApplyChanges();
 
         _world = _iterator.InitWorld(WorldX, WorldY);
+        
+        Span2D<Color> c = _colors.Span;
+        for (int x = 0; x < WorldX; x++)
+        {
+            for (int y = 0; y < WorldY; y++)
+            {
+                c[y, x] = _world[x, y].Col;
+            }
+        }
         
         base.Initialize();
     }
@@ -122,7 +128,7 @@ public class Cat : Game
                     {
                         for (int y = 0; y < WorldY; y++)
                         {
-                            c[x, y] = _world[x, y].Col;
+                            c[y, x] = _world[x, y].Col;
                         }
                     }
                 }
@@ -141,9 +147,9 @@ public class Cat : Game
 
         double ms = gameTime.ElapsedGameTime.TotalMilliseconds;
         
-        Debug.WriteLine(
+        /*Debug.WriteLine(
             "fps: " + (1000 / ms) + " (" + ms + "ms)" + " iterations: " + Iterations
-        );
+        );*/
 
         base.Update(gameTime);
     }

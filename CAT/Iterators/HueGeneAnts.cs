@@ -78,7 +78,7 @@ public class HueGeneAnts : Iterator
                     _newWorld[x, y] ??= current;
                     if (Rand.NextDouble() < GrowthChance)
                     {
-                        Point dir = Direction.GetDir(Rand.Next(4));
+                        Point dir = Direction.Cardinals[Rand.Next(4)];
                         Point loc = new((current.Pos.X + dir.X + _width) % _width, (current.Pos.Y + dir.Y + _height) % _height);
                         FloatCell adj = _world[loc.X, loc.Y];
                     

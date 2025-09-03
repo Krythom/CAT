@@ -55,12 +55,12 @@ public class Dam(int types) : Iterator
                 IntCell current = _world[x, y];
                 int[] counts = new int[types];
                 List<int> valid = [];
-                int next = current.Strength;
+                int next = current.Id;
                 _neighbors = current.GetMoore(_world, 1, true, _neighbors);
                 
                 foreach (IntCell neighbor in _neighbors)
                 {
-                    counts[neighbor.Strength]++;
+                    counts[neighbor.Id]++;
                 }
                 
                 for (int i = 0; i < types; i++)
@@ -76,7 +76,7 @@ public class Dam(int types) : Iterator
                     next = valid[Rand.Next(valid.Count)];
                 }
 
-                if (next != current.Strength)
+                if (next != current.Id)
                 {
                     _newWorld[x, y] = new IntCell(x, y, next, _cols[next])
                     {

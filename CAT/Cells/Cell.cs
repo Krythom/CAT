@@ -49,11 +49,11 @@ public abstract class Cell
         switch (type)
         {
             case 0:
-                return GetNeumann(world, 1, false, neighbors);
+                return GetNeumann(world, 1, true, neighbors);
             case 1:
-                return GetNeumann(world, 8, false, neighbors);
+                return GetNeumann(world, 8, true, neighbors);
             case 2:
-                return GetDiagonal(world, 8, false, neighbors);
+                return GetDiagonal(world, 8, true, neighbors);
             case 3:
                 foreach (Point loc in _horse)
                 {
@@ -61,10 +61,10 @@ public abstract class Cell
                 }
                 return neighbors;
             case 4:
-                return GetMoore(world, 1, false, neighbors);
+                return GetMoore(world, 1, true, neighbors);
             case 5:
-                GetDiagonal(world, 8, false, neighbors);
-                neighbors.AddRange(GetNeumann(world, 8, false, []));
+                GetDiagonal(world, 8, true, neighbors);
+                neighbors.AddRange(GetNeumann(world, 8, true, []));
                 return neighbors;
             default:
                 return neighbors;

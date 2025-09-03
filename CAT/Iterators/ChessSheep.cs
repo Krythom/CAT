@@ -38,7 +38,7 @@ public class ChessSheep : Iterator
             for (int y = 0; y < _height; y++)
             {
                 IntCell current = _world[x, y];
-                _neighbors = current.GetChess(_world, current.Strength, _neighbors);
+                _neighbors = current.GetChess(_world, current.Id, _neighbors);
                 int[] counts = new int[6];
 
                 int highest = 0;
@@ -48,17 +48,17 @@ public class ChessSheep : Iterator
                 {
                     if (neighbor != null)
                     {
-                        counts[neighbor.Strength]++;
+                        counts[neighbor.Id]++;
                     
-                        if (counts[neighbor.Strength] > highest || counts[neighbor.Strength] == highest && Rand.Next(2) == 0)
+                        if (counts[neighbor.Id] > highest || counts[neighbor.Id] == highest && Rand.Next(2) == 0)
                         {
-                            highest = counts[neighbor.Strength];
-                            index = neighbor.Strength;
+                            highest = counts[neighbor.Id];
+                            index = neighbor.Id;
                         }
                     }
                 }
 
-                if (index == current.Strength)
+                if (index == current.Id)
                 {
                     _newWorld[x, y] = current;
                 }

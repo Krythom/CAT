@@ -4,11 +4,11 @@ namespace CAT;
 
 public class IntCell : Cell
 {
-    public int Strength;
+    public int Id;
     
-    public IntCell(int x, int y, int strength, Color col)
+    public IntCell(int x, int y, int id, Color col)
     {
-        Strength = strength;
+        Id = id;
         Pos = new Point(x, y);
         Col = col;
     }

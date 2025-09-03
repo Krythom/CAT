@@ -6,19 +6,21 @@ namespace CAT;
 public class DirectionalCell : Cell
 {
     public double Strength { get; set; }
-    public Point Direction { get; set; }
+    public Point Dir { get; set; }
+    public int Index { get; set; }
     
-    public DirectionalCell(int x, int y, Point direction, Color col)
+    public DirectionalCell(int x, int y, int index, Color col)
     {
-        Direction = direction;
+        Index = index;
+        Dir = Direction.Cardinals[index];
         Pos = new Point(x, y);
         Col = col;
     }
-
-    public DirectionalCell(int x, int y, Point direction, double strength, Color col)
+    
+    public DirectionalCell(int x, int y, Color col)
     {
-        Direction = direction;
-        Strength = strength;
+        Index = -1;
+        Dir = Direction.None;
         Pos = new Point(x, y);
         Col = col;
     }
@@ -32,38 +34,5 @@ public static class Direction
     public static readonly Point Right = new(1, 0);
     public static readonly Point None = new(0, 0);
     
-    public static readonly List<Point> Cardinals = [Up, Right, Down, Left];
-
-    public static Point GetDir(int n)
-    {
-        return n switch
-        {
-            0 => Up,
-            1 => Right,
-            2 => Down,
-            3 => Left,
-            _ => None
-        };
-    }
-
-    public static int GetInt(Point p)
-    {
-        if (p == Up)
-        {
-            return 0;
-        }
-        if (p == Right)
-        {
-            return 1;
-        }
-        if (p == Down)
-        {
-            return 2;
-        }
-        if (p == Left)
-        {
-            return 3;
-        }
-        return 4;
-    }
+    public static readonly Point[] Cardinals = [Up, Right, Down, Left];
 }

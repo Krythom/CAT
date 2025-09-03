@@ -47,7 +47,7 @@ public class Pond(int types, int tolerance) : Iterator
 
                 foreach (IntCell neighbor in _neighbors)
                 {
-                    int diff = Math.Abs(current.Strength - neighbor.Strength);
+                    int diff = Math.Abs(current.Id - neighbor.Id);
                     if (diff < tolerance)
                     {
                         active = true;
@@ -58,7 +58,7 @@ public class Pond(int types, int tolerance) : Iterator
                 if (active)
                 {
                     done = false;
-                    int newStrength = (current.Strength + Rand.Next(-1, 2) + types) % types;
+                    int newStrength = (current.Id + Rand.Next(-1, 2) + types) % types;
                     IntCell placed = new(x, y, newStrength, Color.White);
                     placed.LastUpdate = Cat.Iterations;
                     placed.Updates = current.Updates + 1;

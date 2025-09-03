@@ -29,7 +29,7 @@ public class Dfm : Iterator
                 {
                     _world[x, y] = new IntCell(x,y, 1, _cols[1]);
                 }
-                else if (r < 0.999995)
+                else if (r < 0.999999)
                 {
                     _world[x, y] = new IntCell(x,y, 0, _cols[0]);
                 }
@@ -50,9 +50,9 @@ public class Dfm : Iterator
             for (int y = 0; y < _height; y++)
             {
                 IntCell current = _world[x, y];
-                int next = current.Strength;
+                int next = current.Id;
                     
-                switch (current.Strength)
+                switch (current.Id)
                 {
                     case 3:
                         next = 2;
@@ -66,11 +66,11 @@ public class Dfm : Iterator
                         _neighbors = current.GetMoore(_world, 1, true, _neighbors);
                         foreach (IntCell neighbor in _neighbors)
                         {
-                            if (neighbor.Strength == 1)
+                            if (neighbor.Id == 1)
                             {
                                 walls++;
                             }
-                            else if (neighbor.Strength == 2)
+                            else if (neighbor.Id == 2)
                             {
                                 blue++;
                             }
@@ -80,7 +80,7 @@ public class Dfm : Iterator
                         {
                             next = 3;
                         }
-                        else if (walls == 3)
+                        else if (walls is 2 or 7)
                         {
                             next = 1;
                         }
@@ -94,10 +94,10 @@ public class Dfm : Iterator
                     
                     case 0:
                     {
-                        _neighbors = current.GetNeumann(_world, 1, true, _neighbors);
+                        _neighbors = current.GetMoore(_world, 1, true, _neighbors);
                         foreach (IntCell neighbor in _neighbors)
                         {
-                            if (neighbor.Strength == 3)
+                            if (neighbor.Id == 3)
                             {
                                 next = 3;
                                 break;
@@ -108,7 +108,7 @@ public class Dfm : Iterator
                     }
                 }
 
-                if (next == current.Strength)
+                if (next == current.Id)
                 {
                     _newWorld[x, y] = current;
                 }

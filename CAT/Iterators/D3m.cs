@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace CAT;
@@ -25,7 +27,7 @@ public class D3m : Iterator
             for (int y = 0; y < _height; y++)
             {
                 double r = Rand.NextDouble();
-                if (r < 0.00001)
+                if (r < 0.00005)
                 {
                     _world[x, y] = new IntCell(x,y, 4, _cols[4]);
                 }
@@ -41,37 +43,42 @@ public class D3m : Iterator
 
     public override IntCell[,] Iterate()
     {
+        Completed = true;
+        
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
                 IntCell current = _world[x, y];
-                int next = current.Strength;
+                int next = current.Id;
                     
-                switch (current.Strength)
+                switch (current.Id)
                 {
                     case 4:
+                        Completed = false;
                         next = 1;
                         break;
                     
                     case 3:
+                        Completed = false;
                         next = 2;
                         break;
                     
                     case 2:
                     {
+                        Completed = false;
                         int walls = 0;
-                        
+
                         _neighbors = current.GetMoore(_world, 2, true, _neighbors);
                         foreach (IntCell neighbor in _neighbors)
                         {
-                            if (neighbor.Strength == 1)
+                            if (neighbor.Id == 1)
                             {
                                 walls++;
                             }
                         }
 
-                        if (walls is 1 or 4 or 13 or 16 or 20)
+                        if (walls > Rand.Next(40) + 4 || walls == 4)
                         {
                             next = 4;
                         }
@@ -85,10 +92,10 @@ public class D3m : Iterator
                     
                     case 0:
                     {
-                        _neighbors = current.GetNeumann(_world, 1, true, _neighbors);
+                        _neighbors = current.GetMoore(_world, 1, true, _neighbors);
                         foreach (IntCell neighbor in _neighbors)
                         {
-                            if (neighbor.Strength is 3 or 4)
+                            if (neighbor.Id is 3 or 4)
                             {
                                 next = 3;
                                 break;
@@ -99,7 +106,7 @@ public class D3m : Iterator
                     }
                 }
 
-                if (next == current.Strength)
+                if (next == current.Id)
                 {
                     _newWorld[x, y] = current;
                 }
